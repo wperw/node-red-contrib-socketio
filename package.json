@@ -9,7 +9,7 @@
         "nodes": {
             "socket-io": "socketio.js"
         }
-    }
+    },
   "main": "socketio.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
