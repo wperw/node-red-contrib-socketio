@@ -18,5 +18,6 @@ To see an example usage go to [Example Chat App](https://flows.nodered.org/flow/
 ##License
 MIT
 
-
+##Thanks
+Thank to @nexflo for translating the comments in English and for pre-sending control data 
 
