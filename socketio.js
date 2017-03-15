@@ -126,13 +126,17 @@ module.exports = function(RED) {
 					
 			switch(RED.util.getMessageProperty(msg,"socketIOEmit")) {
 				case "broadcast.emit":
-					//ritorno a tutti tranne che al chiamante
-					io.sockets.sockets[RED.util.getMessageProperty(msg,"socketIOId")].broadcast.emit(msg.socketIOEvent , msg.payload);
+					//Return to all but the caller
+					if(io.sockets.sockets[RED.util.getMessageProperty(msg,"socketIOId")]){
+						io.sockets.sockets[RED.util.getMessageProperty(msg,"socketIOId")].broadcast.emit(msg.socketIOEvent , msg.payload);
+					}
 					//console.log("broadcast.emit");
 					break;
 				case "emit":
-					//ritorno solo al chiamante
-					io.sockets.sockets[RED.util.getMessageProperty(msg,"socketIOId")].emit(msg.socketIOEvent , msg.payload);
+					//Return only to the caller
+					if(io.sockets.sockets[RED.util.getMessageProperty(msg,"socketIOId")]){
+						io.sockets.sockets[RED.util.getMessageProperty(msg,"socketIOId")].emit(msg.socketIOEvent , msg.payload);
+					}
 					//console.log("emit");
 					break;
 				default:
