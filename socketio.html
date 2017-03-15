@@ -1,4 +1,4 @@
-<!-- nodo socketIO config, avrà lo scopo di mantenere le informazioni per il contesto de nodi socketIo in e out-->
+<!-- socketIO config node, will aim to maintain the information for the context of nodes socketIo in and out-->
 <script type="text/javascript">
     RED.nodes.registerType('socketio-config',{
         category: 'config',
@@ -125,16 +125,16 @@
 <script type="text/x-red" data-help-name="socketio-in">
    <p>Socket IO Input node</p>
    <p>Implementation of a SocketIO server</p>
-   <p>This node can be used to receive socket event from a web page</p>
+   <p>This node can be used to receive socket events from a web page</p>
    <br />
    <p>This node output:</p>
    <p><code>msg.payload</code> as <i>Object</i> = event data received</p>
    <p><code>msg.socketIOEvent</code> as <i>String</i> = event type received</p>
-   <p><code>msg.socketIOId</code> as <i>String</i> = socket id that generate the event</p>
+   <p><code>msg.socketIOId</code> as <i>String</i> = socket id that generated the event</p>
    <p><code>msg.socketIOStaticProperties</code> as <i>Object</i> = User defined properties added to the socket</p>
    <br />
    <p>The user can add all the topic/event he want</p>
-   <p>The predefined <code>connect/disconnect</code> ecc... events are automatically implemented</p>
+   <p>The predefined <code>connect/disconnect</code> etc... events are automatically implemented</p>
 </script>
 
 <!-- nodo socketIO out, avrà lo scopo di effettuare l'emit dei dati verso il server-->
@@ -171,15 +171,15 @@
    <p>Implementation of a SocketIO server</p>
    <p>This node can be used to send socket event from a web page</p>
    <br />
-   <p>This node accept on input:</p>
+   <p>This node accepts on input:</p>
    <p><code>msg.payload</code> as <i>Object</i> = event data to send</p>
    <p><code>msg.socketIOEvent</code> as <i>String</i> = event type to send</p>
    <p><code>msg.socketIOId</code> as <i>String</i> = socket id for sending option</p>
    <p><code>msg.socketIOEmit</code> as <i>String</i> = socket emit type:</p>
    <p>&nbsp;&nbsp; possibilities are :</p>
-   <p>&nbsp;&nbsp;<code>broadcast.emit</code> as <i>String</i> = send to all sockets expect this socket</p>
+   <p>&nbsp;&nbsp;<code>broadcast.emit</code> as <i>String</i> = send to all sockets except this socket</p>
    <p>&nbsp;&nbsp;<code>emit</code> as <i>String</i> = send only to this socket</p>
    <p>&nbsp;&nbsp; not defined = send to all sockets</p>
-   <p><code>msg.socketIOAddStaticProperties</code> as <i>Object</i> = User defined properties to add to the socket (if already defined they will be overwrite)</p>
+   <p><code>msg.socketIOAddStaticProperties</code> as <i>Object</i> = User defined properties to add to the socket (if already defined they will be overwriten)</p>
    <br />
 </script>
