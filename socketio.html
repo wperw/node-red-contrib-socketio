@@ -183,3 +183,81 @@
    <p><code>msg.socketIOAddStaticProperties</code> as <i>Object</i> = User defined properties to add to the socket (if already defined they will be overwriten)</p>
    <br />
 </script>
+
+<!-- node socketIO join, join a room-->
+<script type="text/javascript">
+    RED.nodes.registerType('socketio-join',{
+		category:"SocketIO",
+        color:"rgb(0, 230, 184)",
+		defaults:{
+			name: {value:""},
+			server: {value:"", required:true, type:"socketio-config"}
+		},
+		inputs: 1,
+		outputs: 0,
+		icon: "bridge.png",
+		label: function(){
+			return this.name || "SocketIO JOIN";
+		}		
+    });
+</script>
+
+<script type="text/x-red" data-template-name="socketio-join">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+	<div class="form-row">
+        <label for="node-input-server"><i class="fa fa-tag"></i> Server</label>
+        <input type="text" id="node-input-server">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="socketio-join">
+   <p>Socket IO Join node</p>
+   <p>Implementation of a SocketIO server</p>
+   <p>This node can be used to join a Socket IO room</p>
+   <br />
+   <p>This node accepts on input:</p>
+   <p><code>msg.payload.room</code> as <i>String</i> = room to join</p>
+   <br />
+</script>
+
+<!-- node socketIO leave, leave a room-->
+<script type="text/javascript">
+    RED.nodes.registerType('socketio-leave',{
+		category:"SocketIO",
+        color:"rgb(0, 230, 184)",
+		defaults:{
+			name: {value:""},
+			server: {value:"", required:true, type:"socketio-config"}
+		},
+		inputs: 1,
+		outputs: 0,
+		icon: "bridge.png",
+		label: function(){
+			return this.name || "SocketIO LEAVE";
+		}		
+    });
+</script>
+
+<script type="text/x-red" data-template-name="socketio-leave">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+	<div class="form-row">
+        <label for="node-input-server"><i class="fa fa-tag"></i> Server</label>
+        <input type="text" id="node-input-server">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="socketio-leave">
+   <p>Socket IO Leave node</p>
+   <p>Implementation of a SocketIO server</p>
+   <p>This node can be used to leave a Socket IO room</p>
+   <br />
+   <p>This node accepts on input:</p>
+   <p><code>msg.payload.room</code> as <i>String</i> = room to leave</p>
+   <br />
+</script>
