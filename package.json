@@ -1,15 +1,15 @@
 {
   "name": "node-red-contrib-socketio",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "Implementation for Node-RED of a SocketIO Sever",
   "dependencies": {
     "socket.io": ">=1.5.1"
-    },
-  "node-red"     : {
-        "nodes": {
-            "socket-io": "socketio.js"
-        }
-    },
+  },
+  "node-red": {
+    "nodes": {
+      "socket-io": "socketio.js"
+    }
+  },
   "main": "socketio.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
