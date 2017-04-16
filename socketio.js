@@ -139,6 +139,12 @@ module.exports = function(RED) {
 					}
 					//console.log("emit");
 					break;
+				case "room":
+				//emit to all
+				if(msg.room){
+					io.to(msg.room).emit(msg.socketIOEvent , msg.payload);
+				}
+				//console.log("io..to.emit");
 				default:
 				//emit to all
 				io.emit(msg.socketIOEvent , msg.payload);
@@ -148,9 +154,43 @@ module.exports = function(RED) {
 		
 	}
 	
+	function socketIoJoin(n) {
+		RED.nodes.createNode(this,n);
+		// node-specific code goes here
+		var node = this;
+		this.name = n.name;
+		this.server = RED.nodes.getNode(n.server);
+		
+		node.on('input', function(msg) {
+			if(io.sockets.sockets[RED.util.getMessageProperty(msg,"socketIOId")]){
+				io.sockets.sockets[RED.util.getMessageProperty(msg,"socketIOId")].join(msg.payload.room);
+				node.send(msg);
+			}
+		});
+	}
+	
+	function socketIoLeave(n) {
+		RED.nodes.createNode(this,n);
+		// node-specific code goes here
+		var node = this;
+		this.name = n.name;
+		this.server = RED.nodes.getNode(n.server);
+		
+		node.on('input', function(msg) {
+			if(io.sockets.sockets[RED.util.getMessageProperty(msg,"socketIOId")]){
+				io.sockets.sockets[RED.util.getMessageProperty(msg,"socketIOId")].join(msg.payload.room);
+				node.send(msg);
+			}
+		});
+	}
+	
+	
+	
 	
 
 	RED.nodes.registerType("socketio-config",socketIoConfig);
 	RED.nodes.registerType("socketio-in",socketIoIn);
 	RED.nodes.registerType("socketio-out",socketIoOut);
+	RED.nodes.registerType("socketio-join",socketIoJoin);
+	RED.nodes.registerType("socketio-leave",socketIoLeave);
 }
