@@ -144,7 +144,8 @@ module.exports = function(RED) {
 				if(msg.room){
 					io.to(msg.room).emit(msg.socketIOEvent , msg.payload);
 				}
-				//console.log("io..to.emit");
+				//console.log("io.to.emit", msg.room);
+				break
 				default:
 				//emit to all
 				io.emit(msg.socketIOEvent , msg.payload);
@@ -178,15 +179,10 @@ module.exports = function(RED) {
 		
 		node.on('input', function(msg) {
 			if(io.sockets.sockets[RED.util.getMessageProperty(msg,"socketIOId")]){
-				io.sockets.sockets[RED.util.getMessageProperty(msg,"socketIOId")].join(msg.payload.room);
-				node.send(msg);
+				io.sockets.sockets[RED.util.getMessageProperty(msg,"socketIOId")].leave(msg.payload.room);
 			}
 		});
 	}
-	
-	
-	
-	
 
 	RED.nodes.registerType("socketio-config",socketIoConfig);
 	RED.nodes.registerType("socketio-in",socketIoIn);
