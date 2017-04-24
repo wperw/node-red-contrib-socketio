@@ -145,7 +145,7 @@ module.exports = function(RED) {
 					io.to(msg.room).emit(msg.socketIOEvent , msg.payload);
 				}
 				//console.log("io.to.emit", msg.room);
-				break
+				break;
 				default:
 				//emit to all
 				io.emit(msg.socketIOEvent , msg.payload);
