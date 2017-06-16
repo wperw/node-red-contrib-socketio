@@ -21,5 +21,8 @@ To see an example usage go to [Example Chat App](https://flows.nodered.org/flow/
 MIT
 
 ## Thanks
-Thank to @nexflo for translating the comments in English and for pre-sending control data 
+Thank to: 
+* @ nexflo for translating the comments in English and for pre-sending control data 
+* @ bimalyn-IBM for implementig rooms
+
 
