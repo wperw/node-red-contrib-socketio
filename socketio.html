@@ -262,3 +262,26 @@
    <p><code>msg.payload.room</code> as <i>String</i> = room to leave</p>
    <br />
 </script>
+
+<script type="text/x-red" data-help-name="socketio-rooms">
+    RED.nodes.registerType('lower-case',{
+       category:"SocketIO",
+        color:"rgb(0, 230, 184)",
+		defaults:{
+			name: {value:""},
+			server: {value:"", required:true, type:"socketio-config"}
+		},
+        inputs:0,
+        outputs:1,
+        icon: "bridge.png",
+		label: function(){
+			return this.name || "SocketIO ROOMS";
+		}	
+    });
+</script>
+
+
+
+<script type="text/x-red" data-help-name="lower-case">
+    <p>A node that gives you the list of rooms in socketio</p>
+</script>
