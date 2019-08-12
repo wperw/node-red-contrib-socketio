@@ -169,7 +169,19 @@ module.exports = function(RED) {
 			}
 		});
 	}
-	
+	function socketIoRooms(n) {
+		RED.nodes.createNode(this,n);
+		// node-specific code goes here
+		var node = this;
+		this.name = n.name;
+		this.server = RED.nodes.getNode(n.server);
+		
+		node.on('input', function(msg) {
+			if(io.sockets.sockets[RED.util.getMessageProperty(msg,"socketIOId")]){
+				node.send(io.sockets.adapter.rooms);
+			}
+		});
+	}
 	function socketIoLeave(n) {
 		RED.nodes.createNode(this,n);
 		// node-specific code goes here
@@ -188,5 +200,6 @@ module.exports = function(RED) {
 	RED.nodes.registerType("socketio-in",socketIoIn);
 	RED.nodes.registerType("socketio-out",socketIoOut);
 	RED.nodes.registerType("socketio-join",socketIoJoin);
+	RED.nodes.registerType("socketio-rooms",socketIoRooms);
 	RED.nodes.registerType("socketio-leave",socketIoLeave);
 }
