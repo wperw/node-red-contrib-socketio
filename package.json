@@ -3,7 +3,7 @@
   "version": "1.0.6",
   "description": "Implementation for Node-RED of a SocketIO Sever",
   "dependencies": {
-    "socket.io": ">=1.5.1"
+   "socket.io": ">=2.2.0"
   },
   "node-red": {
     "nodes": {
