@@ -1,6 +1,5 @@
 /**
  * Copyright Gallimberti Telemaco 02/02/2017
- * Modified by Phil Cazella 03/20/2021 
  **/
 
 module.exports = function(RED) {
