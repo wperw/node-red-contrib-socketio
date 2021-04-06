@@ -4,6 +4,7 @@
         category: 'config',
         defaults: {
 			port:{value:80, required:true, validate:RED.validators.number()},
+            options: {value: ''},
             sendClient: {value:true},
             path: {value:"/socket.io"},
 			bindToNode: {value: false}
@@ -26,11 +27,25 @@
                 $("#node-config-input-bindToNode").prop('checked', false);
             }
 			$("#node-config-input-bindToNode").change();
+            this.editor = RED.editor.createEditor({
+                id: 'node-config-input-options-editor',
+                mode: 'ace/mode/json',
+                value: $("#node-config-input-options").val()
+            });
+        },
+        oneditsave: function () {
+            $("#node-config-input-options").val(this.editor.getValue());
+            this.editor.destroy();
+            delete this.editor;
+        },
+        oneditcancel: function () {
+            this.editor.destroy();
+            delete this.editor;
 		}
     });
 </script>
 
-<script type="text/x-red" data-template-name="socketio-config">
+<script type="text/html" data-template-name="socketio-config">
     <div class="form-row">
 		<input type="checkbox" id="node-config-input-bindToNode" style="display: inline-block; width: auto; vertical-align: top;">
 		<label for="node-config-input-bindToNode" style="width: auto"> Bind to Node-red Instance</label>
@@ -47,10 +62,16 @@
 		<label for="node-config-input-path"><i class="fa fa-paper-plane-o"></i> InputPath?</label>
 		<input type="text" id="node-config-input-path" placeholder="/socket.io">
 	</div>
-
+	<div class="form-row">
+		<label for="node-config-input-options"><i class="fa fa-file-code-o"></i> Options:</label>
+        <input type="hidden" id="node-config-input-options" autofocus="autofocus">
+	</div>
+    <div class="form-row node-config-text-editor-row">
+        <div style="height:250px;" class="node-text-editor" id="node-config-input-options-editor"></div>
+    </div>
 </script>
 
-<script type="text/x-red" data-help-name="socketio-config">
+<script type="text/html" data-help-name="socketio-config">
    <p>Socket IO node</p>
    <p>VUOTO</p>
 </script>
@@ -108,7 +129,7 @@
     });
 </script>
 
-<script type="text/x-red" data-template-name="socketio-in">
+<script type="text/html" data-template-name="socketio-in">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -122,7 +143,7 @@
     </div>
 </script>
 
-<script type="text/x-red" data-help-name="socketio-in">
+<script type="text/html" data-help-name="socketio-in">
    <p>Socket IO Input node</p>
    <p>Implementation of a SocketIO server</p>
    <p>This node can be used to receive socket events from a web page</p>
