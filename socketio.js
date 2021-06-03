@@ -87,6 +87,8 @@ module.exports = function(RED) {
     }
 
     io.on("connection", function(socket) {
+      socket.removeAllListeners();
+	  
       node.rules.forEach(function(val, i) {
         addListener(socket, val, i);
       });
