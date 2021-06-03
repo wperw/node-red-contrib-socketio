@@ -70,6 +70,7 @@ module.exports = function(RED) {
         RED.util.setMessageProperty(msg, "payload", msgin, true);
         RED.util.setMessageProperty(msg, "socketIOEvent", val.v, true);
         RED.util.setMessageProperty(msg, "socketIOId", socket.id, true);
+        RED.util.setMessageProperty(msg, "socketIOHandshake", socket.handshake, true);
         if (
           customProperties[RED.util.getMessageProperty(msg, "socketIOId")] !=
           null
