@@ -46,29 +46,14 @@ module.exports = function(RED) {
     this.server = RED.nodes.getNode(n.server);
     this.rules = n.rules || [];
 
-    this.specialIOEvent = [
-	// Events emitted by the Manager:
-      { v: "open" },
-      { v: "error" },
-	  { v: "close" },
-	  { v: "ping" },
-	  { v: "packet" },
-	  { v: "reconnect_attempt" },
-	  { v: "reconnect" },
-	  { v: "reconnect_error" },
-	  { v: "reconnect_failed" },
-	  
-	  // Events emitted by the Socket:
-      { v: "connect" },
-	  { v: "connect_error" },
-      { v: "disconnect" }
-    ];
-
-    function addListener(socket, val, i) {
-      socket.on(val.v, function(msgin) {
+    io.on("connection", function(socket) {
+      socket.removeAllListeners();
+      socket.offAny();
+	      
+      socket.onAny(function(eName, data) {
         var msg = {};
-        RED.util.setMessageProperty(msg, "payload", msgin, true);
-        RED.util.setMessageProperty(msg, "socketIOEvent", val.v, true);
+        RED.util.setMessageProperty(msg, "payload", data, true);
+        RED.util.setMessageProperty(msg, "socketIOEvent", eName, true);
         RED.util.setMessageProperty(msg, "socketIOId", socket.id, true);
         RED.util.setMessageProperty(msg, "socketIOHandshake", socket.handshake, true);
         if (
@@ -83,18 +68,6 @@ module.exports = function(RED) {
           );
         }
         node.send(msg);
-      });
-    }
-
-    io.on("connection", function(socket) {
-      socket.removeAllListeners();
-	  
-      node.rules.forEach(function(val, i) {
-        addListener(socket, val, i);
-      });
-      //Adding support for all other special messages
-      node.specialIOEvent.forEach(function(val, i) {
-        addListener(socket, val, i);
       });
     });
   }
