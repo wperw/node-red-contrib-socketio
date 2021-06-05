@@ -16,21 +16,22 @@ module.exports = function(RED) {
     try {
       this.options = n.options ? JSON.parse(n.options) : {};
     } catch (error) {
-      node.error("[Wrong Options] create socket.io instance fail!");
+      node.error("Socket.io cannot parse options");
       this.options = {};
     }
-    this.bindToNode = n.bindToNode || false;
-
+    this.bindToNode = !!n.bindToNode;
+    
+    this.options.serveClient = node.sendClient
+    this.options.path = node.path
+    node.log("Socket.io options: " + JSON.stringify(this.options))
     if (this.bindToNode) {
       io = new Server(RED.server, this.options);
     } else {
       io = new Server(this.options);
-      io.serveClient(node.sendClient);
-      io.path(node.path);
       io.listen(node.port);
     }
     var bindOn = this.bindToNode
-      ? "bind to Node-red port"
+      ? "bound to Node-red port"
       : "on port " + this.port;
     node.log("Created server " + bindOn);
 
