@@ -12,7 +12,9 @@ module.exports = function(RED) {
     var node = this;
     this.port = n.port || 80;
     this.sendClient = n.sendClient;
-    this.path = n.path || "/socket.io";
+    this.path = n.path || "/socket.io/";
+	  if (!this.path.startsWith("/")) this.path = "/" + this.path
+	  if (!this.path.endsWith("/")) this.path = this.path + "/"
     try {
       this.options = n.options ? JSON.parse(n.options) : {};
     } catch (error) {
