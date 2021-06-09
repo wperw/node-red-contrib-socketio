@@ -22,7 +22,8 @@ module.exports = function(RED) {
     this.bindToNode = n.bindToNode || false;
 
     if (this.bindToNode) {
-      io = new Server(RED.server, this.options);
+      httpserver = RED.nodes.getNode(n.server).server
+      io = new Server(httpserver, this.options);
     } else {
       io = new Server(this.options);
       io.serveClient(node.sendClient);
