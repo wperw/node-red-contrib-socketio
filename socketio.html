@@ -5,6 +5,7 @@
         defaults: {
 			port:{value:80, required:true, validate:RED.validators.number()},
             options: {value: ''},
+	    server:{value:"", required:true, type:"node-inst-server"},
             sendClient: {value:true},
             path: {value:"/socket.io"},
 			bindToNode: {value: false}
@@ -53,6 +54,10 @@
 			<label for="node-config-input-port"><i class="fa fa-terminal"></i> Port</label>
 			<input type="text" id="node-config-input-port">
 		</div>
+    </div>
+	<div class="form-row">
+        <label for="node-config-input-server"><i class="fa fa-tag"></i> Server</label>
+        <input type="text" id="node-config-input-server">
     </div>
 	<div class="form-row">
 		<label for="node-config-input-sendClient"><i class="fa fa-share-square-o"></i> Serve client js file?</label>
