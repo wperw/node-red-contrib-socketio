@@ -6,6 +6,7 @@ module.exports = function(RED) {
   const { Server } = require("socket.io");
   var io;
   var customProperties = {};
+  var sockets = [];
 
   function socketIoConfig(n) {
     RED.nodes.createNode(this, n);
@@ -29,7 +30,14 @@ module.exports = function(RED) {
     node.log("Created server " + bindOn);
 
     node.on("close", function() {
-      io.close();
+      if (!this.bindToNode) {
+        io.close();
+      }
+      sockets.forEach(function (socket) {
+        node.log('disconnect:' + socket.id);
+        socket.disconnect(true);
+      });
+      sockets = [];
     });
   }
 
@@ -80,6 +88,7 @@ module.exports = function(RED) {
     }
 
     io.on("connection", function(socket) {
+      sockets.push(socket);
       node.rules.forEach(function(val, i) {
         addListener(socket, val, i);
       });
