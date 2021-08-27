@@ -1,10 +1,12 @@
-# node-red-contrib-socketio
+# node-red-contrib-socketio-javis86
 Implementation for [Node-RED](https://nodered.org/) of the popular [Socket.IO](http://socket.io/).
+
+from original project node-red-contrib-socketio
 
 ## Installation
 To install node-red-contrib-socketio use this command
 
-`npm i node-red-contrib-socketio`
+`npm i node-red-contrib-socketio-javis86`
 
 ## Composition
 The Socket.IO implementation is made with
@@ -26,3 +28,6 @@ Thank to:
 * @bimalyn-IBM for implementig rooms
 * @essuraj for implementig rooms listing node
 * @cazellap for pushong adding compatibility to socketIO 3.0
+* @javis86 individual contributor for fixing node-red hangs when deploy flows
+
+

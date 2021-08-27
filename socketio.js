@@ -6,6 +6,7 @@ module.exports = function(RED) {
   const { Server } = require("socket.io");
   var io;
   var customProperties = {};
+  var sockets = [];
 
   function socketIoConfig(n) {
     RED.nodes.createNode(this, n);
@@ -13,12 +14,31 @@ module.exports = function(RED) {
     this.port = n.port || 80;
     this.sendClient = n.sendClient;
     this.path = n.path || "/socket.io";
-    this.bindToNode = n.bindToNode || false;
+    this.bindToNode = n.bindToNode || false;    
+    this.corsOrigins = n.corsOrigins || "*";
+    this.corsMethods = n.corsMethods.toUpperCase().split(",") || "GET,POST";
+    this.enableCors = n.enableCors || false;
 
-    if (this.bindToNode) {
-      io = new Server(RED.server);
-    } else {
-      io = new Server();
+    node.log("socketIoConfig - CORS METHODS " + JSON.stringify(this.corsMethods));
+    node.log("socketIoConfig - CORS ORIGINS " + JSON.stringify(this.corsOrigins));
+    node.log("socketIoConfig - CORS METHODS " + JSON.stringify(this.enableCors));
+
+    let corsOptions = {};
+    
+    if (this.enableCors) {
+      corsOptions = {
+        cors: {
+          origin: this.corsOrigins,
+          methods: this.corsMethods
+        }
+      };
+    }
+
+    if (this.bindToNode) {      
+      io = new Server(RED.server, corsOptions);
+    } else {            
+      io = new Server(corsOptions);
+      
       io.serveClient(node.sendClient);
       io.path(node.path);
       io.listen(node.port);
@@ -29,7 +49,14 @@ module.exports = function(RED) {
     node.log("Created server " + bindOn);
 
     node.on("close", function() {
-      io.close();
+      if (!this.bindToNode) {
+        io.close();
+      }
+      sockets.forEach(function (socket) {
+        node.log('disconnect:' + socket.id);
+        socket.disconnect(true);
+      });
+      sockets = [];
     });
   }
 
@@ -80,6 +107,7 @@ module.exports = function(RED) {
     }
 
     io.on("connection", function(socket) {
+      sockets.push(socket);
       node.rules.forEach(function(val, i) {
         addListener(socket, val, i);
       });
