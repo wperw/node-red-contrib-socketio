@@ -1,32 +1,35 @@
 <!-- socketIO config node, will aim to maintain the information for the context of nodes socketIo in and out-->
 <script type="text/javascript">
-    RED.nodes.registerType('socketio-config',{
+    RED.nodes.registerType('socketio-config', {
         category: 'config',
         defaults: {
-			port:{value:80, required:true, validate:RED.validators.number()},
-            sendClient: {value:true},
-            path: {value:"/socket.io"},
-			bindToNode: {value: false}
+            port: { value: 80, required: true, validate: RED.validators.number() },
+            sendClient: { value: true },
+            path: { value: "/socket.io" },
+            bindToNode: { value: false },
+            corsOrigins: { value: "*" },
+            corsMethods: { value: "GET,POST" },
+            enableCors: { value: false }
         },
-        label: function() {
+        label: function () {
             return this.bindToNode ? "socketIO server bind to Node-red" : "socketIO server at " + this.port;
         },
-		oneditprepare: function() {
-			$("#node-config-input-bindToNode").change(function() {
-				if($(this).is(":checked")) {
-					$("#node-row-bindToNode").hide();
-				}
-				else {
-					$("#node-row-bindToNode").show();
-				}
-			});
-			if (this.bindToNode) {
+        oneditprepare: function () {
+            $("#node-config-input-bindToNode").change(function () {
+                if ($(this).is(":checked")) {
+                    $(".node-row-bindToNode").hide();
+                }
+                else {
+                    $(".node-row-bindToNode").show();
+                }
+            });
+            if (this.bindToNode) {
                 $("#node-config-input-bindToNode").prop('checked', true);
             } else {
                 $("#node-config-input-bindToNode").prop('checked', false);
             }
-			$("#node-config-input-bindToNode").change();
-		}
+            $("#node-config-input-bindToNode").change();
+        }
     });
 </script>
 
@@ -34,10 +37,10 @@
     <div class="form-row">
 		<input type="checkbox" id="node-config-input-bindToNode" style="display: inline-block; width: auto; vertical-align: top;">
 		<label for="node-config-input-bindToNode" style="width: auto"> Bind to Node-red Instance</label>
-		<div id="node-row-bindToNode" class="hide">
+		<div class="form-row node-row-bindToNode" class="hide">
 			<label for="node-config-input-port"><i class="fa fa-terminal"></i> Port</label>
 			<input type="text" id="node-config-input-port">
-		</div>
+		</div>		
     </div>
 	<div class="form-row">
 		<label for="node-config-input-sendClient"><i class="fa fa-share-square-o"></i> Serve client js file?</label>
@@ -47,7 +50,18 @@
 		<label for="node-config-input-path"><i class="fa fa-paper-plane-o"></i> InputPath?</label>
 		<input type="text" id="node-config-input-path" placeholder="/socket.io">
 	</div>
-
+    <div class="form-row">
+		<input type="checkbox" id="node-config-input-enableCors" style="display: inline-block; width: auto; vertical-align: top;">
+		<label for="node-config-input-enableCors" style="width: auto"> Enable Cors</label>			
+    </div>
+    <div class="form-row" class="hide">
+	    <label for="node-config-input-corsOrigins"></i> Cors Origins</label>
+	    <input type="text" id="node-config-input-corsOrigins">
+	</div>
+    <div class="form-row" class="hide">
+	    <label for="node-config-input-corsMethods"></i> Cors Methods</label>
+		<input type="text" id="node-config-input-corsMethods">
+	</div>
 </script>
 
 <script type="text/x-red" data-help-name="socketio-config">
@@ -59,52 +73,52 @@
 <!-- che sia il caso di settare la proprietà di uscita? -->
 <!-- devo validari i caratterii dei topic per evitare anche quelli vuoti -->
 <script type="text/javascript">
-    RED.nodes.registerType('socketio-in',{
-		category:"SocketIO",
-        color:"rgb(0, 230, 184)",
-		defaults:{
-			name:{value:""},
-			server:{value:"", required:true, type:"socketio-config"},
-			rules: {value:[{v:""}]}
-		},
-		inputs: 0,
-		outputs: 1,
-		icon: "bridge.png",
-		label: function(){
-			return this.name || "SocketIO IN";
-		},
-		oneditprepare: function(){
-			var node = this;
-			$("#node-input-rule-container").css('min-height','250px').css('min-width','450px').editableList({
-				sortable: true,
+    RED.nodes.registerType('socketio-in', {
+        category: "SocketIO",
+        color: "rgb(0, 230, 184)",
+        defaults: {
+            name: { value: "" },
+            server: { value: "", required: true, type: "socketio-config" },
+            rules: { value: [{ v: "" }] }
+        },
+        inputs: 0,
+        outputs: 1,
+        icon: "bridge.png",
+        label: function () {
+            return this.name || "SocketIO IN";
+        },
+        oneditprepare: function () {
+            var node = this;
+            $("#node-input-rule-container").css('min-height', '250px').css('min-width', '450px').editableList({
+                sortable: true,
                 removable: true,
-				addItem: function(container,i,opt) {
-					if (!opt.hasOwnProperty('r')) {
-                        opt.r = {v:""};
+                addItem: function (container, i, opt) {
+                    if (!opt.hasOwnProperty('r')) {
+                        opt.r = { v: "" };
                     }
-					var row = $('<div/>').appendTo(container);
-					var label = $('<label/>',{for:"node-input-rule-value-"+i,style:"margin-left: 3px;"}).text("Topic " + i).appendTo(row);
-					var valueField = $('<input/>',{class:"node-input-rule-value",type:"text",style:"margin-left: 5px;"}).appendTo(row);
-					valueField.val(opt.r.v);
-				}
-			});
-			for (var i=0;i<this.rules.length;i++) {
-				var rule = this.rules[i];
-				$("#node-input-rule-container").editableList('addItem',{r:rule,i:i});
-			}
-		},
-		oneditsave: function() {
-			var rules = $("#node-input-rule-container").editableList('items');
-			var node = this;
-			node.rules = [];
-			rules.each(function(i) {
+                    var row = $('<div/>').appendTo(container);
+                    var label = $('<label/>', { for: "node-input-rule-value-" + i, style: "margin-left: 3px;" }).text("Topic " + i).appendTo(row);
+                    var valueField = $('<input/>', { class: "node-input-rule-value", type: "text", style: "margin-left: 5px;" }).appendTo(row);
+                    valueField.val(opt.r.v);
+                }
+            });
+            for (var i = 0; i < this.rules.length; i++) {
+                var rule = this.rules[i];
+                $("#node-input-rule-container").editableList('addItem', { r: rule, i: i });
+            }
+        },
+        oneditsave: function () {
+            var rules = $("#node-input-rule-container").editableList('items');
+            var node = this;
+            node.rules = [];
+            rules.each(function (i) {
                 var ruleData = $(this).data('data');
                 var rule = $(this);
-				var r = {};
+                var r = {};
                 r.v = rule.find(".node-input-rule-value").val();
                 node.rules.push(r);
             });
-		}
+        }
     });
 </script>
 
@@ -139,19 +153,19 @@
 
 <!-- nodo socketIO out, avrà lo scopo di effettuare l'emit dei dati verso il server-->
 <script type="text/javascript">
-    RED.nodes.registerType('socketio-out',{
-		category:"SocketIO",
-        color:"rgb(0, 230, 184)",
-		defaults:{
-			name: {value:""},
-			server: {value:"", required:true, type:"socketio-config"}
-		},
-		inputs: 1,
-		outputs: 0,
-		icon: "bridge.png",
-		label: function(){
-			return this.name || "SocketIO OUT";
-		}		
+    RED.nodes.registerType('socketio-out', {
+        category: "SocketIO",
+        color: "rgb(0, 230, 184)",
+        defaults: {
+            name: { value: "" },
+            server: { value: "", required: true, type: "socketio-config" }
+        },
+        inputs: 1,
+        outputs: 0,
+        icon: "bridge.png",
+        label: function () {
+            return this.name || "SocketIO OUT";
+        }
     });
 </script>
 
@@ -187,19 +201,19 @@
 
 <!-- node socketIO join, join a room-->
 <script type="text/javascript">
-    RED.nodes.registerType('socketio-join',{
-		category:"SocketIO",
-        color:"rgb(0, 230, 184)",
-		defaults:{
-			name: {value:""},
-			server: {value:"", required:true, type:"socketio-config"}
-		},
-		inputs: 1,
-		outputs: 0,
-		icon: "bridge.png",
-		label: function(){
-			return this.name || "SocketIO JOIN";
-		}		
+    RED.nodes.registerType('socketio-join', {
+        category: "SocketIO",
+        color: "rgb(0, 230, 184)",
+        defaults: {
+            name: { value: "" },
+            server: { value: "", required: true, type: "socketio-config" }
+        },
+        inputs: 1,
+        outputs: 0,
+        icon: "bridge.png",
+        label: function () {
+            return this.name || "SocketIO JOIN";
+        }
     });
 </script>
 
@@ -226,19 +240,19 @@
 
 <!-- node socketIO leave, leave a room-->
 <script type="text/javascript">
-    RED.nodes.registerType('socketio-leave',{
-		category:"SocketIO",
-        color:"rgb(0, 230, 184)",
-		defaults:{
-			name: {value:""},
-			server: {value:"", required:true, type:"socketio-config"}
-		},
-		inputs: 1,
-		outputs: 0,
-		icon: "bridge.png",
-		label: function(){
-			return this.name || "SocketIO LEAVE";
-		}		
+    RED.nodes.registerType('socketio-leave', {
+        category: "SocketIO",
+        color: "rgb(0, 230, 184)",
+        defaults: {
+            name: { value: "" },
+            server: { value: "", required: true, type: "socketio-config" }
+        },
+        inputs: 1,
+        outputs: 0,
+        icon: "bridge.png",
+        label: function () {
+            return this.name || "SocketIO LEAVE";
+        }
     });
 </script>
 
@@ -264,19 +278,19 @@
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType('socketio-rooms',{
-       category:"SocketIO",
-        color:"rgb(0, 230, 184)",
-		defaults:{
-			name: {value:""},
-			server: {value:"", required:true, type:"socketio-config"}
-		},
-        inputs:1,
-        outputs:1,
+    RED.nodes.registerType('socketio-rooms', {
+        category: "SocketIO",
+        color: "rgb(0, 230, 184)",
+        defaults: {
+            name: { value: "" },
+            server: { value: "", required: true, type: "socketio-config" }
+        },
+        inputs: 1,
+        outputs: 1,
         icon: "bridge.png",
-		label: function(){
-			return this.name || "SocketIO ROOMS";
-		}	
+        label: function () {
+            return this.name || "SocketIO ROOMS";
+        }
     });
 </script>
 

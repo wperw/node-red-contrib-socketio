@@ -1,6 +1,6 @@
 {
-  "name": "node-red-contrib-socketio-javis86",
-  "version": "1.1.1",
+  "name": "node-red-contrib-socketio",
+  "version": "1.1.0",
   "description": "Implementation for Node-RED of a SocketIO Sever",
   "dependencies": {
    "socket.io": ">=3.1.0"
@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/javis86/node-red-contrib-socketio.git"
+    "url": "git+https://github.com/wperw/node-red-contrib-socketio.git"
   },
   "keywords": [
     "node-red"
@@ -24,7 +24,7 @@
   "author": "Telemaco Gallimberti",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/javis86/node-red-contrib-socketio/issues"
+    "url": "https://github.com/wperw/node-red-contrib-socketio/issues"
   },
-  "homepage": "https://github.com/javis86/node-red-contrib-socketio#readme"
+  "homepage": "https://github.com/wperw/node-red-contrib-socketio#readme"
 }

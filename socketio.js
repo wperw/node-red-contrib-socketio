@@ -14,12 +14,31 @@ module.exports = function(RED) {
     this.port = n.port || 80;
     this.sendClient = n.sendClient;
     this.path = n.path || "/socket.io";
-    this.bindToNode = n.bindToNode || false;
+    this.bindToNode = n.bindToNode || false;    
+    this.corsOrigins = n.corsOrigins || "*";
+    this.corsMethods = n.corsMethods.toUpperCase().split(",") || "GET,POST";
+    this.enableCors = n.enableCors || false;
 
-    if (this.bindToNode) {
-      io = new Server(RED.server);
-    } else {
-      io = new Server();
+    node.log("socketIoConfig - CORS METHODS " + JSON.stringify(this.corsMethods));
+    node.log("socketIoConfig - CORS ORIGINS " + JSON.stringify(this.corsOrigins));
+    node.log("socketIoConfig - CORS METHODS " + JSON.stringify(this.enableCors));
+
+    let corsOptions = {};
+    
+    if (this.enableCors) {
+      corsOptions = {
+        cors: {
+          origin: this.corsOrigins,
+          methods: this.corsMethods
+        }
+      };
+    }
+
+    if (this.bindToNode) {      
+      io = new Server(RED.server, corsOptions);
+    } else {            
+      io = new Server(corsOptions);
+      
       io.serveClient(node.sendClient);
       io.path(node.path);
       io.listen(node.port);
