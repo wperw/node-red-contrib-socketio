@@ -13,12 +13,18 @@ module.exports = function(RED) {
     this.port = n.port || 80;
     this.sendClient = n.sendClient;
     this.path = n.path || "/socket.io";
+    try {
+      this.options = n.options ? JSON.parse(n.options) : {};
+    } catch (error) {
+      node.error("[Wrong Options] create socket.io instance fail!");
+      this.options = {};
+    }
     this.bindToNode = n.bindToNode || false;
 
     if (this.bindToNode) {
-      io = new Server(RED.server);
+      io = new Server(RED.server, this.options);
     } else {
-      io = new Server();
+      io = new Server(this.options);
       io.serveClient(node.sendClient);
       io.path(node.path);
       io.listen(node.port);
