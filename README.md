@@ -25,3 +25,4 @@ Thank to:
 * @nexflo for translating the comments in English and for pre-sending control data 
 * @bimalyn-IBM for implementig rooms
 * @essuraj for implementig rooms listing node
+* @cazellap for pushong adding compatibility to socketIO 3.0
