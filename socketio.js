@@ -12,19 +12,29 @@ module.exports = function(RED) {
     var node = this;
     this.port = n.port || 80;
     this.sendClient = n.sendClient;
-    this.path = n.path || "/socket.io";
-    this.bindToNode = n.bindToNode || false;
-
+    this.path = n.path || "/socket.io/";
+	  if (!this.path.startsWith("/")) this.path = "/" + this.path
+	  if (!this.path.endsWith("/")) this.path = this.path + "/"
+    try {
+      this.options = n.options ? JSON.parse(n.options) : {};
+    } catch (error) {
+      node.error("Socket.io cannot parse options");
+      this.options = {};
+    }
+    this.bindToNode = !!n.bindToNode;
+    
+    this.options.serveClient = node.sendClient
+    this.options.path = node.path
+    node.log("Socket.io options: " + JSON.stringify(this.options))
     if (this.bindToNode) {
-      io = new Server(RED.server);
+      httpserver = RED.nodes.getNode(n.server).server
+      io = new Server(httpserver, this.options);
     } else {
-      io = new Server();
-      io.serveClient(node.sendClient);
-      io.path(node.path);
+      io = new Server(this.options);
       io.listen(node.port);
     }
     var bindOn = this.bindToNode
-      ? "bind to Node-red port"
+      ? "bound to Node-red port"
       : "on port " + this.port;
     node.log("Created server " + bindOn);
 
@@ -40,30 +50,16 @@ module.exports = function(RED) {
     this.server = RED.nodes.getNode(n.server);
     this.rules = n.rules || [];
 
-    this.specialIOEvent = [
-	// Events emitted by the Manager:
-      { v: "open" },
-      { v: "error" },
-	  { v: "close" },
-	  { v: "ping" },
-	  { v: "packet" },
-	  { v: "reconnect_attempt" },
-	  { v: "reconnect" },
-	  { v: "reconnect_error" },
-	  { v: "reconnect_failed" },
-	  
-	  // Events emitted by the Socket:
-      { v: "connect" },
-	  { v: "connect_error" },
-      { v: "disconnect" }
-    ];
-
-    function addListener(socket, val, i) {
-      socket.on(val.v, function(msgin) {
+    io.on("connection", function(socket) {
+      socket.removeAllListeners();
+      socket.offAny();
+	      
+      socket.onAny(function(eName, data) {
         var msg = {};
-        RED.util.setMessageProperty(msg, "payload", msgin, true);
-        RED.util.setMessageProperty(msg, "socketIOEvent", val.v, true);
+        RED.util.setMessageProperty(msg, "payload", data, true);
+        RED.util.setMessageProperty(msg, "socketIOEvent", eName, true);
         RED.util.setMessageProperty(msg, "socketIOId", socket.id, true);
+        RED.util.setMessageProperty(msg, "socketIOHandshake", socket.handshake, true);
         if (
           customProperties[RED.util.getMessageProperty(msg, "socketIOId")] !=
           null
@@ -76,16 +72,6 @@ module.exports = function(RED) {
           );
         }
         node.send(msg);
-      });
-    }
-
-    io.on("connection", function(socket) {
-      node.rules.forEach(function(val, i) {
-        addListener(socket, val, i);
-      });
-      //Adding support for all other special messages
-      node.specialIOEvent.forEach(function(val, i) {
-        addListener(socket, val, i);
       });
     });
   }
